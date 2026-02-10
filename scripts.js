@@ -1,63 +1,117 @@
 /* =========================
-   THEME TOGGLE
+   THEME CYCLER (4 THEMES)
 ========================= */
 const root = document.documentElement;
 const toggleBtn = document.getElementById("theme-toggle");
 
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme) {
-  root.setAttribute("data-theme", savedTheme);
-  if (toggleBtn) toggleBtn.textContent = savedTheme === "light" ? "🌙" : "☀️";
+const themes = ["dark", "light", "mint", "coffee"];
+const themeIcons = {
+  dark: "🌙",
+  light: "☀️",
+  mint: "🌿",
+  coffee: "☕"
+};
+
+/* Get saved theme or default */
+let currentTheme = localStorage.getItem("theme");
+if (!themes.includes(currentTheme)) {
+  currentTheme = "dark";
 }
 
-toggleBtn?.addEventListener("click", () => {
-  const isLight = root.getAttribute("data-theme") === "light";
-  const next = isLight ? "dark" : "light";
-  root.setAttribute("data-theme", next);
-  localStorage.setItem("theme", next);
-  toggleBtn.textContent = next === "light" ? "🌙" : "☀️";
-});
+/* =========================
+   APPLY THEME (SINGLE SOURCE OF TRUTH)
+========================= */
+function applyTheme(theme) {
+  currentTheme = theme;
+
+  root.setAttribute("data-theme", theme);
+  localStorage.setItem("theme", theme);
+
+  if (toggleBtn) {
+    toggleBtn.textContent = themeIcons[theme];
+    toggleBtn.setAttribute(
+      "aria-label",
+      `Switch theme (current: ${theme})`
+    );
+  }
+
+  generatePixels();
+}
 
 /* =========================
-   CTA SCROLL
+   THEME BUTTON CLICK
 ========================= */
-document.getElementById("cta-btn")?.addEventListener("click", () => {
-  document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
-});
-
-/* =========================
-   SCROLL REVEAL
-========================= */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("active");
-      observer.unobserve(entry.target);
-    }
+if (toggleBtn) {
+  toggleBtn.addEventListener("click", () => {
+    const index = themes.indexOf(currentTheme);
+    const nextIndex = (index + 1) % themes.length;
+    applyTheme(themes[nextIndex]);
   });
-}, { threshold: 0.15 });
-
-document.querySelectorAll("section, .reveal")
-  .forEach(el => observer.observe(el));
+}
 
 /* =========================
    PIXEL BACKGROUND STARS
 ========================= */
 const pixelBg = document.querySelector(".pixel-bg");
-const isLightMode = root.getAttribute("data-theme") === "light";
-const PIXEL_COUNT = isLightMode ? 25 : 45;
 
-for (let i = 0; i < PIXEL_COUNT; i++) {
-  const pixel = document.createElement("div");
-  pixel.className = "pixel";
+function generatePixels() {
+  if (!pixelBg) return;
 
-  const size = Math.random() > 0.7 ? 4 : 3;
-  pixel.style.width = `${size}px`;
-  pixel.style.height = `${size}px`;
-  pixel.style.left = `${Math.random() * 100}%`;
-  pixel.style.top = `${Math.random() * 100}%`;
-  pixel.style.animationDuration = `${20 + Math.random() * 30}s`;
-  pixel.style.animationDelay = `${Math.random() * 10}s`;
+  pixelBg.innerHTML = "";
 
-  pixelBg.appendChild(pixel);
+  const lightLikeThemes = ["light", "mint"];
+  const pixelCount = lightLikeThemes.includes(currentTheme) ? 25 : 45;
+
+  for (let i = 0; i < pixelCount; i++) {
+    const pixel = document.createElement("div");
+    pixel.className = "pixel";
+
+    const size = Math.random() > 0.7 ? 4 : 3;
+    pixel.style.width = `${size}px`;
+    pixel.style.height = `${size}px`;
+
+    pixel.style.left = `${Math.random() * 100}%`;
+    pixel.style.top = `${Math.random() * 100}%`;
+
+    pixel.style.animationDuration = `${20 + Math.random() * 30}s`;
+    pixel.style.animationDelay = `${Math.random() * 10}s`;
+
+    pixelBg.appendChild(pixel);
+  }
 }
+
+/* =========================
+   CTA SCROLL
+========================= */
+const ctaBtn = document.getElementById("cta-btn");
+if (ctaBtn) {
+  ctaBtn.addEventListener("click", () => {
+    document
+      .getElementById("projects")
+      ?.scrollIntoView({ behavior: "smooth" });
+  });
+}
+
+/* =========================
+   SCROLL REVEAL
+========================= */
+const observer = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("active");
+        observer.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.15 }
+);
+
+document
+  .querySelectorAll("section, .reveal")
+  .forEach(el => observer.observe(el));
+
+/* =========================
+   INITIAL LOAD
+========================= */
+applyTheme(currentTheme);
