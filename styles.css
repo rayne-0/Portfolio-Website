@@ -1,5 +1,5 @@
 /* =================================================
-   DESIGN SYSTEM
+   DESIGN SYSTEM — DEFAULT (DARK)
 ================================================= */
 :root {
   --bg-main: #020617;
@@ -10,11 +10,16 @@
 
   --accent: #38bdf8;
 
+  --grid-color: rgba(56, 189, 248, 0.08);
+  --pixel-color: #38bdf8;
+
   --radius: 14px;
   --transition: 0.3s ease;
 }
 
-/* LIGHT MODE */
+/* =================================================
+   LIGHT THEME
+================================================= */
 [data-theme="light"] {
   --bg-main: #f8fafc;
   --bg-card: rgba(255, 255, 255, 0.95);
@@ -23,6 +28,41 @@
   --text-muted: #475569;
 
   --accent: #2563eb;
+
+  --grid-color: rgba(30, 41, 59, 0.06);
+  --pixel-color: #1e293b;
+}
+
+/* =================================================
+   MINT THEME
+================================================= */
+[data-theme="mint"] {
+  --bg-main: #ecfdf5;
+  --bg-card: rgba(255, 255, 255, 0.92);
+
+  --text-main: #064e3b;
+  --text-muted: #047857;
+
+  --accent: #10b981;
+
+  --grid-color: rgba(16, 185, 129, 0.08);
+  --pixel-color: #047857;
+}
+
+/* =================================================
+   COFFEE THEME
+================================================= */
+[data-theme="coffee"] {
+  --bg-main: #1c1917;
+  --bg-card: rgba(41, 37, 36, 0.9);
+
+  --text-main: #f5f5f4;
+  --text-muted: #d6d3d1;
+
+  --accent: #c08457;
+
+  --grid-color: rgba(192, 132, 87, 0.1);
+  --pixel-color: #e7c6a5;
 }
 
 /* =================================================
@@ -48,7 +88,7 @@ body {
 }
 
 /* =================================================
-   PIXEL + GRID BACKGROUND (THEME AWARE)
+   GRID + PIXEL BACKGROUND
 ================================================= */
 .pixel-bg {
   position: fixed;
@@ -56,61 +96,29 @@ body {
   z-index: 0;
   pointer-events: none;
 
-  /* DARK MODE GRID (cool tone) */
   background-image:
-    linear-gradient(
-      to right,
-      rgba(56, 189, 248, 0.08) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(56, 189, 248, 0.08) 1px,
-      transparent 1px
-    );
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
 
   background-size: 24px 24px;
 }
 
-/* LIGHT MODE GRID (neutral ink tone) */
-[data-theme="light"] .pixel-bg {
-  background-image:
-    linear-gradient(
-      to right,
-      rgba(30, 41, 59, 0.06) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(30, 41, 59, 0.06) 1px,
-      transparent 1px
-    );
-}
-
-/* =================================================
-   PIXEL STARS
-================================================= */
 .pixel {
   position: absolute;
   width: 3px;
   height: 3px;
-  background: var(--accent);
+  background: var(--pixel-color);
   opacity: 0.6;
   animation: pixelFloat linear infinite;
 }
 
-/* Light mode pixels — visible, calm */
-[data-theme="light"] .pixel {
+[data-theme="light"] .pixel,
+[data-theme="mint"] .pixel {
   width: 4px;
   height: 4px;
-  background: #1e293b;
-  opacity: 0.55;
-  box-shadow:
-    0 0 0 1px rgba(30, 41, 59, 0.15),
-    0 0 6px rgba(30, 41, 59, 0.25);
+  opacity: 0.5;
 }
 
-/* Pixel motion */
 @keyframes pixelFloat {
   from { transform: translateY(0); }
   to   { transform: translateY(-120vh); }
@@ -128,9 +136,15 @@ body {
   border-bottom: 1px solid rgba(148, 163, 184, 0.15);
 }
 
-[data-theme="light"] .site-header {
-  background: rgba(248, 250, 252, 0.95);
+[data-theme="light"] .site-header,
+[data-theme="mint"] .site-header {
+  background: rgba(255, 255, 255, 0.95);
   border-bottom: 1px solid rgba(2, 6, 23, 0.08);
+}
+
+[data-theme="coffee"] .site-header {
+  background: rgba(28, 25, 23, 0.92);
+  border-bottom: 1px solid rgba(214, 211, 209, 0.2);
 }
 
 .nav {
@@ -164,14 +178,6 @@ body {
   color: var(--text-main);
 }
 
-[data-theme="light"] .nav a {
-  color: #475569;
-}
-
-[data-theme="light"] .nav a:hover {
-  color: #020617;
-}
-
 .nav a::after {
   content: "";
   position: absolute;
@@ -187,11 +193,40 @@ body {
   width: 100%;
 }
 
+/* =================================================
+   THEME TOGGLE (FIXED EMOJI PADDING)
+================================================= */
 .theme-toggle {
-  background: none;
-  border: none;
+  all: unset;
   cursor: pointer;
-  font-size: 1.1rem;
+
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 18px;
+  line-height: 1;
+
+  border-radius: 8px;
+  color: var(--text-main);
+
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(148, 163, 184, 0.15);
+  transform: translateY(-1px);
+}
+
+.theme-toggle:active {
+  transform: translateY(0);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* =================================================
@@ -213,7 +248,7 @@ body {
 .hero h2 {
   font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 800;
-  background: linear-gradient(90deg, var(--accent), #a78bfa);
+  background: linear-gradient(90deg, var(--accent), var(--text-main));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -232,12 +267,6 @@ body {
   color: var(--bg-main);
   font-weight: 600;
   cursor: pointer;
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.hero button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
 }
 
 /* =================================================
@@ -267,7 +296,7 @@ section h2::after {
 }
 
 /* =================================================
-   TECHNOLOGIES MARQUEE (STABLE ICONS)
+   TECHNOLOGIES (ICON SAFE)
 ================================================= */
 .tech-marquee {
   margin-top: 2.5rem;
@@ -286,17 +315,15 @@ section h2::after {
   align-items: center;
   gap: 0.6rem;
   padding: 0.65rem 1rem;
+  min-height: 44px;
   border-radius: 999px;
   background: var(--bg-card);
   border: 1px solid rgba(148, 163, 184, 0.15);
-  min-height: 44px;
 }
 
 .tech-item img {
   width: 22px;
   height: 22px;
-  max-width: 22px;
-  max-height: 22px;
   object-fit: contain;
   display: block;
 }
@@ -315,10 +342,10 @@ section h2::after {
    PROJECTS
 ================================================= */
 .projects-grid {
-  margin-top: 2.5rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.75rem;
+  margin-top: 2.5rem;
 }
 
 .project-card {
@@ -326,12 +353,6 @@ section h2::after {
   padding: 1.75rem;
   border-radius: var(--radius);
   border: 1px solid rgba(148, 163, 184, 0.15);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.project-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
 }
 
 /* =================================================
