@@ -3,33 +3,26 @@
 ================================================= */
 :root {
   --bg-main: #020617;
-  --bg-surface: #0b1224;
   --bg-card: rgba(15, 23, 42, 0.85);
 
   --text-main: #e5e7eb;
   --text-muted: #9aa4b2;
 
   --accent: #38bdf8;
-  --accent-soft: rgba(56, 189, 248, 0.15);
 
   --radius: 14px;
-  --radius-sm: 8px;
-
-  --transition-fast: 0.2s ease;
   --transition: 0.3s ease;
 }
 
 /* LIGHT MODE */
 [data-theme="light"] {
   --bg-main: #f8fafc;
-  --bg-surface: #e5e7eb;
-  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card: rgba(255, 255, 255, 0.95);
 
   --text-main: #020617;
   --text-muted: #475569;
 
   --accent: #2563eb;
-  --accent-soft: rgba(37, 99, 235, 0.15);
 }
 
 /* =================================================
@@ -48,79 +41,80 @@ html {
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background:
-    radial-gradient(
-      1200px circle at 20% -10%,
-      rgba(56, 189, 248, 0.08),
-      transparent 40%
-    ),
-    var(--bg-main);
+  background: var(--bg-main);
   color: var(--text-main);
   line-height: 1.7;
+  overflow-x: hidden;
 }
 
 /* =================================================
-   PIXEL GAME BACKGROUND
+   PIXEL + GRID BACKGROUND (THEME AWARE)
 ================================================= */
 .pixel-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+
+  /* DARK MODE GRID (cool tone) */
   background-image:
     linear-gradient(
       to right,
-      rgba(255, 255, 255, 0.03) 1px,
+      rgba(56, 189, 248, 0.08) 1px,
       transparent 1px
     ),
     linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0.03) 1px,
+      rgba(56, 189, 248, 0.08) 1px,
       transparent 1px
     );
+
   background-size: 24px 24px;
-  animation: gridScroll 40s linear infinite;
 }
 
-/* Pixel stars */
+/* LIGHT MODE GRID (neutral ink tone) */
+[data-theme="light"] .pixel-bg {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(30, 41, 59, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(30, 41, 59, 0.06) 1px,
+      transparent 1px
+    );
+}
+
+/* =================================================
+   PIXEL STARS
+================================================= */
 .pixel {
   position: absolute;
   width: 3px;
   height: 3px;
   background: var(--accent);
   opacity: 0.6;
-  animation:
-    pixelFloat linear infinite,
-    pixelFlicker 2s steps(2) infinite;
+  animation: pixelFloat linear infinite;
 }
 
-/* Grid movement */
-@keyframes gridScroll {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 240px 240px;
-  }
+/* Light mode pixels — visible, calm */
+[data-theme="light"] .pixel {
+  width: 4px;
+  height: 4px;
+  background: #1e293b;
+  opacity: 0.55;
+  box-shadow:
+    0 0 0 1px rgba(30, 41, 59, 0.15),
+    0 0 6px rgba(30, 41, 59, 0.25);
 }
 
-/* Pixel drift */
+/* Pixel motion */
 @keyframes pixelFloat {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-120vh);
-  }
+  from { transform: translateY(0); }
+  to   { transform: translateY(-120vh); }
 }
-
-/* Retro flicker */
-@keyframes pixelFlicker {
-  0% { opacity: 0.2; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0.2; }
-}
-
 
 /* =================================================
    HEADER / NAV
@@ -128,16 +122,14 @@ body {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 2;
   background: rgba(2, 6, 23, 0.75);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
 }
 
-/* Light mode header fix */
 [data-theme="light"] .site-header {
-  background: rgba(248, 250, 252, 0.92);
-  backdrop-filter: blur(8px);
+  background: rgba(248, 250, 252, 0.95);
   border-bottom: 1px solid rgba(2, 6, 23, 0.08);
 }
 
@@ -152,11 +144,6 @@ body {
 
 .logo {
   font-weight: 700;
-  letter-spacing: 0.4px;
-}
-
-[data-theme="light"] .logo {
-  color: #020617;
 }
 
 .nav-links {
@@ -169,9 +156,8 @@ body {
 .nav a {
   text-decoration: none;
   color: var(--text-muted);
-  font-weight: 500;
   position: relative;
-  transition: color var(--transition-fast);
+  transition: color 0.2s ease;
 }
 
 .nav a:hover {
@@ -194,7 +180,7 @@ body {
   width: 0;
   height: 2px;
   background: var(--accent);
-  transition: width var(--transition-fast);
+  transition: width 0.2s ease;
 }
 
 .nav a:hover::after {
@@ -206,7 +192,6 @@ body {
   border: none;
   cursor: pointer;
   font-size: 1.1rem;
-  color: var(--text-main);
 }
 
 /* =================================================
@@ -221,12 +206,13 @@ body {
   gap: 1.25rem;
   text-align: center;
   padding: 2rem 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .hero h2 {
-  font-size: clamp(2.75rem, 6vw, 4rem);
+  font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 800;
-  letter-spacing: -0.02em;
   background: linear-gradient(90deg, var(--accent), #a78bfa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -235,13 +221,12 @@ body {
 .hero p {
   max-width: 560px;
   color: var(--text-muted);
-  font-size: 1.05rem;
 }
 
 .hero button {
   margin-top: 1rem;
   padding: 0.85rem 1.75rem;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   border: none;
   background: var(--accent);
   color: var(--bg-main);
@@ -252,7 +237,7 @@ body {
 
 .hero button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 30px var(--accent-soft);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
 }
 
 /* =================================================
@@ -262,6 +247,8 @@ section {
   max-width: 1100px;
   margin: 0 auto;
   padding: 5rem 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 section h2 {
@@ -279,67 +266,39 @@ section h2::after {
   border-radius: 999px;
 }
 
-section p {
-  max-width: 720px;
-  color: var(--text-muted);
-}
-
 /* =================================================
-   TECHNOLOGIES MARQUEE (ICONS)
+   TECHNOLOGIES MARQUEE (STABLE ICONS)
 ================================================= */
 .tech-marquee {
-  position: relative;
-  overflow: hidden;
   margin-top: 2.5rem;
-  padding: 1.5rem 0;
-}
-
-.tech-marquee::before,
-.tech-marquee::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 90px;
-  height: 100%;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.tech-marquee::before {
-  left: 0;
-  background: linear-gradient(to right, var(--bg-main), transparent);
-}
-
-.tech-marquee::after {
-  right: 0;
-  background: linear-gradient(to left, var(--bg-main), transparent);
+  overflow: hidden;
 }
 
 .tech-track {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.25rem;
   width: max-content;
   animation: techScroll 28s linear infinite;
-}
-
-.tech-marquee:hover .tech-track {
-  animation-play-state: paused;
 }
 
 .tech-item {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.7rem 1.1rem;
+  padding: 0.65rem 1rem;
   border-radius: 999px;
   background: var(--bg-card);
   border: 1px solid rgba(148, 163, 184, 0.15);
-  transition: transform var(--transition), background var(--transition);
+  min-height: 44px;
 }
 
 .tech-item img {
   width: 22px;
   height: 22px;
+  max-width: 22px;
+  max-height: 22px;
+  object-fit: contain;
+  display: block;
 }
 
 .tech-item span {
@@ -347,14 +306,9 @@ section p {
   white-space: nowrap;
 }
 
-.tech-item:hover {
-  transform: translateY(-4px);
-  background: var(--accent-soft);
-}
-
 @keyframes techScroll {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to   { transform: translateX(-50%); }
 }
 
 /* =================================================
@@ -369,25 +323,14 @@ section p {
 
 .project-card {
   background: var(--bg-card);
-  border-radius: var(--radius);
   padding: 1.75rem;
+  border-radius: var(--radius);
   border: 1px solid rgba(148, 163, 184, 0.15);
-  transition: transform var(--transition),
-              box-shadow var(--transition),
-              border-color var(--transition);
-}
-
-.project-card h3 {
-  margin-bottom: 0.5rem;
-}
-
-.project-card p {
-  color: var(--text-muted);
+  transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .project-card:hover {
   transform: translateY(-6px);
-  border-color: var(--accent);
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
 }
 
@@ -399,27 +342,16 @@ footer {
   padding: 2.5rem 1rem;
   border-top: 1px solid rgba(148, 163, 184, 0.15);
   color: var(--text-muted);
+  position: relative;
+  z-index: 1;
 }
 
 /* =================================================
-   SCROLL REVEAL
+   REDUCED MOTION
 ================================================= */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-}
-
-.reveal.active {
-  animation: fadeUp 0.7s ease forwards;
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
   }
 }
