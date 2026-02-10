@@ -60,6 +60,69 @@ body {
 }
 
 /* =================================================
+   PIXEL GAME BACKGROUND
+================================================= */
+.pixel-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    );
+  background-size: 24px 24px;
+  animation: gridScroll 40s linear infinite;
+}
+
+/* Pixel stars */
+.pixel {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--accent);
+  opacity: 0.6;
+  animation:
+    pixelFloat linear infinite,
+    pixelFlicker 2s steps(2) infinite;
+}
+
+/* Grid movement */
+@keyframes gridScroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 240px 240px;
+  }
+}
+
+/* Pixel drift */
+@keyframes pixelFloat {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-120vh);
+  }
+}
+
+/* Retro flicker */
+@keyframes pixelFlicker {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.2; }
+}
+
+
+/* =================================================
    HEADER / NAV
 ================================================= */
 .site-header {
