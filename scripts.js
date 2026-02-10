@@ -1,4 +1,16 @@
 /* =========================
+   CLEAR HASH ON LOAD
+========================= */
+if (window.location.hash) {
+  history.replaceState(
+    null,
+    "",
+    window.location.pathname + window.location.search
+  );
+}
+
+
+/* =========================
    THEME CYCLER (4 THEMES)
 ========================= */
 const root = document.documentElement;
@@ -15,7 +27,7 @@ const themeIcons = {
 /* Get saved theme or default */
 let currentTheme = localStorage.getItem("theme");
 if (!themes.includes(currentTheme)) {
-  currentTheme = "dark";
+  currentTheme = "coffee";
 }
 
 /* =========================
